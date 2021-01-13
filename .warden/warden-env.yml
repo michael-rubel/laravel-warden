@@ -10,7 +10,10 @@ services:
 
   php-fpm:
     hostname: "${WARDEN_ENV_NAME}-php-fpm"
-    build: ./.warden/.docker/
+    build:
+      context: ./.warden/.docker/
+      args:
+        PHP_VERSION: "${PHP_VERSION:-7.4}"
     environment:
       - TRAEFIK_DOMAIN
       - TRAEFIK_SUBDOMAIN

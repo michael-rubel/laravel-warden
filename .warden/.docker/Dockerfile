@@ -1,3 +1,4 @@
+ARG PHP_VERSION=
 FROM docker.io/wardenenv/php-fpm:${PHP_VERSION:-7.4}${WARDEN_SVC_PHP_VARIANT:-}
 
 RUN sudo yum install -y php-pgsql \
