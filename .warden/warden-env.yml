@@ -1,0 +1,30 @@
+version: "3.5"
+services:
+  nginx:
+    volumes: ['./:/var/www/html']
+    environment:
+      NGINX_PUBLIC: /public
+      NGINX_TEMPLATE: application.conf
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    hostname: "${WARDEN_ENV_NAME}-php-fpm"
+    build: ./.warden/.docker/
+    environment:
+      - TRAEFIK_DOMAIN
+      - TRAEFIK_SUBDOMAIN
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes: ['./:/var/www/html']
+    extra_hosts:
+      - ${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
+      - ${TRAEFIK_SUBDOMAIN:-app}.${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
+
+  postgres:
+    hostname: "${WARDEN_ENV_NAME}-postgres"
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /var/lib/postgresql/data
+    volumes: ['./.postgres:/var/lib/postgresql/data']
