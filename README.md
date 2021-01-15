@@ -36,6 +36,7 @@ $ warden svc up
 - Po skończeniu wykonania skryptu instalacyjnego, musimy skopiować plik certyfikatu SSL pod adresem `~/.warden/ssl/rootca/certs/ca.cert.pem` i zaimportować do ustawień SSL przeglądarki. Ścieżka będzie mniej więcej podobna: `Settings > Security > Manage Certificates`. Bardzo ważne tutaj jest to, żeby wygenerowało certyfikat z poprawną domeną wirtualną (polecenie `warden bootstrap` robi to automatycznie), ale jeśli pominęłiśmy ten etap lub chcemy zmienić konfigurację projektu (zmienia się domena) to musimy wygenerować certyfikat ponownie, np. `warden sign-certificate laravel.test` i potem zaktualizować to w przeglądarce. 
 - Dla użytkowników Windows 10 trzeba dodatkowo dodawać domeny/subdomeny wirtualne do pliku `/etc/hosts`, jako np: `127.0.0.1 app.laravel.test`. Można korzystać np. z HostsFileEditor: https://hostsfileeditor.com/
 - Jeśli na Linux nie udaje się wejść na domenę, wskazanego w `.env`, dodajmy adres `nameserver 127.0.0.1` do `pliku /etc/resolv.conf`.
+- Żeby połączyć się do bazy z narzędzia zewnętsznego, musisz wybrać kontener bazy z pomocą `warden env ps` oraz użyć `ssh user@tunnel.warden.test -p 2222` z private key'em, pobranym z `/your_user/.warden/tunnel/ssh_key`
 
 ### Polecenia konsolowe Warden
 | Polecenie | Opis |
@@ -45,6 +46,7 @@ $ warden svc up
 | `warden bootstrap` | Uruchomienie środowiska i generacja certyfikatów SSL dla domeny. |
 | `warden sign-certificate <domain>` | Generacja certyfikatu SSL dla domeny. |
 | `warden shell` | Zalogować się do kontenera `php-fpm` do pracy z `bin/magento` lub dowolnym innym narzędziem. |
+| `warden exec <container>` | Uruchomić polecenie na wybranym kontenerze. |
 | `warden env up -d` | Uruchomić środowisko. |
 | `warden env down` | Wyłączyć środowisko wraz z usunięciem kontenerów. |
 | `warden env start` | Włączyć środowisko bez usunięcia kontenerów. |
