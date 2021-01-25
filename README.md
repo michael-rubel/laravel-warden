@@ -29,7 +29,7 @@ $ echo 'export PATH="/opt/warden/bin:$PATH"' >> ~/.bashrc
 $ PATH="/opt/warden/bin:$PATH"
 $ warden svc up
 ```
-- Zróbmy `git clone https://github.com/mr-observer/warden_build` i otwórzmy w osobnym oknie.
+- Zróbmy `git clone https://github.com/mr-observer/warden_build` domyślnego srodowiska (demo) i otwórzmy w osobnym oknie.
 - Wejdźmy do folderu projektu.
 - Dodajmy zmienne `WARDEN_*` z pliku `.env` środowiska do pliku `.env` projektu. Zauważ, że zmienne Laravela, np. `APP_URL` też znajdują się w tym pliku. Dodatkowo możemy wskazać wersje serwisów, np. `PHP_VERSION` lub `REDIS_VERSION`. Folder .warden dodajmy do `.gitignore` projektu.
 - Aby uruchomić proces instalacyjny środowiska, dajmy `warden bootstrap`.
