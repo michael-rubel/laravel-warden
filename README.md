@@ -31,7 +31,7 @@ $ warden svc up
 ```
 - Zróbmy `git clone https://github.com/mr-observer/warden_build` domyślnego srodowiska (demo) i otwórzmy w osobnym oknie.
 - Wejdźmy do folderu projektu.
-- Dodajmy zmienne `WARDEN_*` z pliku `.env` środowiska do pliku `.env` projektu. Zauważ, że zmienne Laravela, np. `APP_URL` też znajdują się w tym pliku. Dodatkowo możemy wskazać wersje serwisów, np. `PHP_VERSION` lub `REDIS_VERSION`. Folder .warden dodajmy do `.gitignore` projektu.
+- Dodajmy zmienne `WARDEN_*` z pliku `.env` środowiska do pliku `.env` projektu. Zauważ, że zmienne Laravela, np. `APP_URL` też znajdują się w tym pliku. Dodatkowo możemy wskazać wersje serwisów, np. `PHP_VERSION` lub `REDIS_VERSION`. Folder `.warden` dodajmy do `.gitignore` projektu.
 - Aby uruchomić proces instalacyjny środowiska, dajmy `warden bootstrap`.
 - Po skończeniu wykonania skryptu instalacyjnego, musimy skopiować plik certyfikatu SSL pod adresem `~/.warden/ssl/rootca/certs/ca.cert.pem` i zaimportować do ustawień SSL przeglądarki. Ścieżka będzie mniej więcej podobna: `Settings > Security > Manage Certificates`. Bardzo ważne tutaj jest to, żeby wygenerowało certyfikat z poprawną domeną wirtualną (polecenie `warden bootstrap` robi to automatycznie), ale jeśli pominęłiśmy ten etap lub chcemy zmienić konfigurację projektu (zmienia się domena) to musimy wygenerować certyfikat ponownie, np. `warden sign-certificate laravel.test` i potem zaktualizować to w przeglądarce. 
 - Dla użytkowników Windows 10 trzeba dodatkowo dodawać domeny/subdomeny wirtualne do pliku `/etc/hosts`, jako np: `127.0.0.1 app.laravel.test`. Można korzystać np. z HostsFileEditor: https://hostsfileeditor.com/
