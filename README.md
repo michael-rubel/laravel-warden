@@ -1,26 +1,17 @@
-## Środowisko deweloperskie Laravel z użyciem Docker Warden 
-- Docs: https://docs.warden.dev/
+## Ready Docker Warden environment for a Laravel Developer with Postgres
+<p align="center">
+    <img alt="PHP 8" src="https://img.shields.io/badge/PHP-8.x-8892BF?style=for-the-badge&logo=php">
+    <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-13.x-336791?style=for-the-badge&logo=postgresql&logoColor=white">
+    <img alt="Redis" src="https://img.shields.io/badge/Redis-6.x-a51f17?style=for-the-badge&logo=redis&logoColor=white">
+</p>
 
-### Serwisy Warden:
-- traefik
-- tunnel
-- dnsmasq
-- portainer
-- mailhog
-
-### Serwisy środowiskowe:
-- nginx
-- php-fpm
-- postgres
-- redis
-
-### Proces instalacyjny oraz dodatkowe instrukcje
+### Installation
 - Docker Desktop 2.2.0.0+: https://docs.docker.com/docker-for-windows/install/
 - Docker Compose 1.25.0+: https://docs.docker.com/compose/install/
-- Jeśli korzystamy z MacOS i potrzebujemy sync'u sesji, to instalujemy dodatkowo Mutagen 0.11.4+: https://mutagen.io/
-- Jeśli korzystamy z Windows 10, włączmy WSL 2 i zainstalujmy Ubuntu 18.04: https://docs.microsoft.com/en-us/windows/wsl/install-win10
-- Jeśli zainstalowało Ubuntu z WSL 1, konwertujmy to do WSL 2 za pomocą polecenia `wsl --set-version Ubuntu-18.04 2` z CMD lub PowerShell.
-- Instalujmy Warden'a:
+- If we use MacOS then we additionally need Mutagen 0.11.4+: https://mutagen.io/
+- If we use Windows 10, enable WSL 2 and install Ubuntu 20.04: https://docs.microsoft.com/en-us/windows/wsl/install-win10
+- If you have installed your Ubuntu with WSL 1, convert it to WSL 2 using `wsl --set-version Ubuntu-VV.04 2` with CMD or PowerShell.
+- Install Warden:
 ```sh
 $ sudo mkdir /opt/warden
 $ sudo chown $(whoami) /opt/warden
@@ -29,25 +20,38 @@ $ echo 'export PATH="/opt/warden/bin:$PATH"' >> ~/.bashrc
 $ PATH="/opt/warden/bin:$PATH"
 $ warden svc up
 ```
-- Zróbmy `git clone https://github.com/michael-rubel/warden_build` domyślnego srodowiska (demo) i otwórzmy w osobnym oknie.
-- Wejdźmy do folderu projektu.
-- Dodajmy zmienne `WARDEN_*` z pliku `.env` środowiska do pliku `.env` projektu. Zauważ, że zmienne Laravela, np. `APP_URL` też znajdują się w tym pliku. Dodatkowo możemy wskazać wersje serwisów, np. `PHP_VERSION` lub `REDIS_VERSION`. Foldery `.warden` oraz `.postgres` dodajmy do `.gitignore` projektu.
-- Aby uruchomić proces instalacyjny środowiska, dajmy `warden bootstrap`.
-- Po skończeniu wykonania skryptu instalacyjnego, musimy skopiować plik certyfikatu SSL pod adresem `~/.warden/ssl/rootca/certs/ca.cert.pem` i zaimportować do ustawień SSL przeglądarki. Ścieżka będzie mniej więcej podobna: `Settings > Security > Manage Certificates`. Bardzo ważne tutaj jest to, żeby wygenerowało certyfikat z poprawną domeną wirtualną (polecenie `warden bootstrap` robi to automatycznie), ale jeśli pominęliśmy ten etap lub chcemy zmienić konfigurację projektu (zmienia się domena) to musimy wygenerować certyfikat ponownie, np. `warden sign-certificate laravel.test` i potem zaktualizować to w przeglądarce. 
-- Dla użytkowników Windows 10 trzeba dodatkowo dodawać domeny/subdomeny wirtualne do pliku `/etc/hosts`, jako np: `127.0.0.1 app.laravel.test`. Można korzystać np. z HostsFileEditor: https://hostsfileeditor.com/
-- Jeśli na Linux'ie nie udaje się wejść na domenę, wskazanego w `.env`, dodajmy adres `nameserver 127.0.0.1` do `pliku /etc/resolv.conf`.
-- Żeby połączyć się do bazy z narzędzia zewnętrznego, musimy wybrać kontener bazy za pomocą `warden env ps` oraz użyć `ssh user@tunnel.warden.test -p 2222` z private key'em, pobranym z `/<USER>/.warden/tunnel/ssh_key`
+- Run `git clone https://github.com/michael-rubel/laravel_warden` to clone the environment files to a separate folder.
+- `cd` to the folder with the project.
+- Add `WARDEN_*` to the `.env` file in the project folder. Take in mind that environment variables needed by Laravel, e.g. `APP_URL` exist in the same `.env` file too. Additionally, we can specify version of the services we need, e.g. `PHP_VERSION` or `REDIS_VERSION`. `.warden` and `.postgres` folders should be added to `.gitignore` of the project.
+- Run `warden bootstrap` to get the environment ready.
+- After bootstrap is finished we should import the certificate file  `~/.warden/ssl/rootca/certs/ca.cert.pem` to trusted SSL's in the browser to join local projects. Important thing is that we need the certificate generated for a specific domain (the `warden bootstrap` do it for us automatically), but if we missed that step or changed the domain, we need to manually regenerate the certificate, i.e. `warden sign-certificate laravel.test`. 
+- For Windows 10 users we should additionally add the domains to the `/etc/hosts`, i.e: `127.0.0.1 app.laravel.test`. You can use open-source HostsFileEditor: https://hostsfileeditor.com/
+- If you can't join the domain after complete installation, add the `nameserver 127.0.0.1` mapping to `/etc/resolv.conf`. Some distributions do not use loopback as a resolver by default.
+- If you need to join the service from the external tools like PHPStorm, we should choose the container name with `warden env ps` and use `ssh user@tunnel.warden.test -p 2222` with the private key that you can get from `/<USER>/.warden/tunnel/ssh_key`
 
-### Polecenia konsolowe Warden
-| Polecenie | Opis |
+### Warden services:
+- traefik
+- tunnel
+- dnsmasq
+- portainer
+- mailhog
+
+### Environment services:
+- nginx
+- php-fpm
+- postgres
+- redis
+
+### Commandline Warden
+| Command | Description |
 | ------ | ------ |
-| `warden svc up` | Uruchomienie serwisów Warden. |
-| `warden svc down` | Wyłączenie serwisów Warden. |
-| `warden bootstrap` | Uruchomienie środowiska i generacja certyfikatów SSL dla domeny. |
-| `warden sign-certificate <domain>` | Generacja certyfikatu SSL dla domeny. |
-| `warden shell` | Zalogować się do kontenera `php-fpm` do pracy z `bin/magento` lub dowolnym innym narzędziem. |
-| `warden exec <container>` | Uruchomić polecenie na wybranym kontenerze. |
-| `warden env up -d` | Uruchomić środowisko. |
-| `warden env down` | Wyłączyć środowisko wraz z usunięciem kontenerów. |
-| `warden env start` | Włączyć środowisko bez usunięcia kontenerów. |
-| `warden env stop` | Wyłączyć środowisko bez usunięcia kontenerów. |
+| `warden svc up` | Run Warden services. |
+| `warden svc down` | Disable Warden services. |
+| `warden bootstrap` | Run environment build an SSL certificate generation for the domain. |
+| `warden sign-certificate <domain>` | Generate SSL for specific domain. |
+| `warden shell` | Log in to container `php-fpm` to work with `artisan`, `composer`, etc. |
+| `warden exec <container>` | Run command on the container. |
+| `warden env up -d` | Run the environment. |
+| `warden env down` | Shutdown the environment. |
+
+- Warden Docs: https://docs.warden.dev/
