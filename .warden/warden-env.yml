@@ -23,6 +23,29 @@ services:
       - ${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
       - ${TRAEFIK_SUBDOMAIN:-app}.${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
 
+  php-debug:
+    hostname: "${WARDEN_ENV_NAME}-php-debug"
+    build:
+      context: ./.warden/.docker/debug/
+      args:
+        PHP_VERSION: "${PHP_VERSION:-8.0}"
+    environment:
+      - TRAEFIK_DOMAIN
+      - TRAEFIK_SUBDOMAIN
+      - SSH_AUTH_SOCK=${SSH_AUTH_SOCK_PATH_ENV:-/tmp/ssh-auth.sock}
+      - NODE_VERSION=${NODE_VERSION:-10}
+      - COMPOSER_VERSION=${COMPOSER_VERSION:-1}
+      - COMPOSER_MEMORY_LIMIT=-1
+      - PHP_IDE_CONFIG=serverName=${WARDEN_ENV_NAME}-docker
+      - HISTFILE=/bash_history/.bash_history
+      - CHOWN_DIR_LIST=${CHOWN_DIR_LIST:-}
+    volumes: ['./:/var/www/html']
+    extra_hosts:
+      - ${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
+      - ${TRAEFIK_SUBDOMAIN:-app}.${TRAEFIK_DOMAIN}:${TRAEFIK_ADDRESS:-0.0.0.0}
+    depends_on:
+      - php-fpm
+
   db:
     hostname: "${WARDEN_ENV_NAME}-postgres"
     image: postgres
